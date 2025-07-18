@@ -10,6 +10,7 @@ import { forecastSchema, weatherHistorySchema } from "~/types/forecast";
 import z from "zod";
 import { isSameMonthAndDay, toISODateString } from "~/services/utils";
 import DailyForecast from "~/components/DailyForecast";
+import WeatherHistory from "~/components/WeatherHistory";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Picnic Planner" }];
@@ -65,11 +66,12 @@ export default function Forecast({ loaderData }: Route.ComponentProps) {
     navigate(`/forecast?date=${date}`);
   };
 
-  console.log(historyForDay);
+  const selectedForecast = forecast.find((f) => f.date === date)!;
 
   return (
     <div className="m-4">
       <h1 className="text-6xl text-center">Picnic Planner</h1>
+
       <div className="grid grid-cols-7 gap-2 mt-8">
         {forecast.map((f) => (
           <DailyForecast
@@ -79,6 +81,14 @@ export default function Forecast({ loaderData }: Route.ComponentProps) {
             onClick={handleClick}
           />
         ))}
+      </div>
+
+      <div className="mt-8">
+        <WeatherHistory
+          date={date}
+          history={historyForDay}
+          forecast={selectedForecast}
+        />
       </div>
     </div>
   );
