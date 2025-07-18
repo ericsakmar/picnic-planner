@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^5.1.1",
     "@react-router/node": "^7.7.0",
     "@react-router/serve": "^7.7.0",
+    "date-fns": "^4.1.0",
     "isbot": "^5.1.27",
     "openmeteo": "^1.2.0",
     "react": "^19.1.0",

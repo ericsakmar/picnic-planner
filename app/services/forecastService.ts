@@ -1,5 +1,6 @@
 import { fetchWeatherApi } from "openmeteo";
 import type { Forecast } from "~/types/forecast";
+import { toISODateString } from "./utils";
 
 export async function getForecast(
   latitude: number,
@@ -31,7 +32,7 @@ export async function getForecast(
     .map(
       (_, i) => new Date((Number(daily.time()) + i * daily.interval()) * 1000)
     )
-    .map((d) => d.toLocaleDateString()); // 7/18/2025
+    .map(toISODateString);
 
   const precipProbabilities = daily.variables(0)!.valuesArray()!;
   const temperatureMaximums = daily.variables(1)!.valuesArray()!;

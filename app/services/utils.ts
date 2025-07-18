@@ -1,5 +1,7 @@
 // TODO test these?
 
+import { formatISOWithOptions } from "date-fns/fp";
+
 export function formDataToObject(formData: FormData): unknown {
   const entries = [...formData.entries()];
 
@@ -10,3 +12,5 @@ export function formDataToObject(formData: FormData): unknown {
     };
   }, {});
 }
+
+export const toISODateString = formatISOWithOptions({ representation: "date" });
