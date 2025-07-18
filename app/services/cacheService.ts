@@ -1,7 +1,7 @@
 import z from "zod";
 import { getItem, removeItem, setItem } from "./localStorageService";
 
-export function getItemFromCache<T>(key: string, schema: z.ZodSchema<T>) {
+function getItemFromCache<T>(key: string, schema: z.ZodSchema<T>) {
   const cacheSchema = z.object({
     expires: z.number(),
     value: schema,
@@ -22,11 +22,7 @@ export function getItemFromCache<T>(key: string, schema: z.ZodSchema<T>) {
   return cached.value;
 }
 
-export function setItemInCache(
-  key: string,
-  ttlMinutes: number,
-  value: unknown
-) {
+function setItemInCache(key: string, ttlMinutes: number, value: unknown) {
   const now = new Date();
 
   const item = {
@@ -37,20 +33,26 @@ export function setItemInCache(
   setItem(key, item);
 }
 
-export async function withCache<T>(
-  cacheKey: string,
+// these types are a bit tricky to follow, but it allows us to accept a function
+// and then return a function with those same args
+export function withCache<TArgs extends any[], TResult>(
+  keyPrefix: string,
   ttlMinutes: number,
-  schema: z.ZodSchema<T>,
-  fn: Promise<T>
-) {
-  const cached = getItemFromCache(cacheKey, schema);
-  if (cached !== null) {
-    return cached;
-  }
+  schema: z.ZodSchema<TResult>,
+  fn: (...args: TArgs) => Promise<TResult>
+): (...args: TArgs) => Promise<TResult> {
+  return async function (...args: TArgs): Promise<TResult> {
+    const cacheKey = `${keyPrefix}-${args.join("-")}`;
 
-  const value = await fn;
+    const cached = getItemFromCache(cacheKey, schema);
+    if (cached !== null) {
+      return cached;
+    }
 
-  setItemInCache(cacheKey, ttlMinutes, value);
+    const value = await fn(...args);
 
-  return value;
+    setItemInCache(cacheKey, ttlMinutes, value);
+
+    return value;
+  };
 }

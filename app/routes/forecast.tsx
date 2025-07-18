@@ -1,6 +1,6 @@
 import { getSettings } from "~/services/settingsService";
 import type { Route } from "./+types/home";
-import { getForecast } from "~/services/forecastService";
+import { getForecast as getForecastBase } from "~/services/forecastService";
 import { redirect } from "react-router";
 import { withCache } from "~/services/cacheService";
 import { forecastSchema } from "~/types/forecast";
@@ -10,7 +10,12 @@ export function meta({}: Route.MetaArgs) {
   return [{ title: "Picnic Planner" }];
 }
 
-// const getForecast = withCache(getForecastBase)
+const getForecast = withCache(
+  "forecast",
+  15,
+  z.array(forecastSchema),
+  getForecastBase
+);
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   var settings = getSettings();
@@ -18,13 +23,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     return redirect("/settings");
   }
 
-  const forecast = await withCache(
-    `forecast-${settings.latitude}-${settings.longitude}`,
-    15,
-    z.array(forecastSchema),
-    getForecast(settings.latitude, settings.longitude)
-  );
-
+  const forecast = await getForecast(settings.latitude, settings.longitude);
   console.log(forecast);
 
   return { settings, forecast };
