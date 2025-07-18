@@ -9,16 +9,18 @@ function getItemFromCache<T>(key: string, schema: z.ZodSchema<T>) {
 
   const cached = getItem(key, cacheSchema);
   if (cached === null) {
+    console.log("cache miss", key);
     return null;
   }
 
   const now = new Date();
   if (now.getTime() > cached.expires) {
+    console.log("expired", key);
     removeItem(key);
     return null;
   }
 
-  console.log("cache hit");
+  console.log("cache hit", key);
   return cached.value;
 }
 

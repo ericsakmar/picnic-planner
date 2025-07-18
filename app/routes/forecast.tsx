@@ -6,7 +6,7 @@ import {
 } from "~/services/forecastService";
 import { redirect } from "react-router";
 import { withCache } from "~/services/cacheService";
-import { forecastSchema } from "~/types/forecast";
+import { forecastSchema, weatherHistorySchema } from "~/types/forecast";
 import z from "zod";
 import { toISODateString } from "~/services/utils";
 
@@ -23,8 +23,8 @@ const getForecast = withCache(
 
 const getHistory = withCache(
   "history",
-  60, // but probably longer?
-  z.object(),
+  12 * 60, // 12 hours, history doesn't change, but we might need to get a new range
+  z.array(weatherHistorySchema),
   getHistoryBase
 );
 
@@ -49,6 +49,9 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 
   const forecast = await getForecast(settings.latitude, settings.longitude);
   console.log(forecast);
+
+  const history = await getHistory(settings.latitude, settings.longitude);
+  console.log(history);
 
   return { settings, forecast };
 }
