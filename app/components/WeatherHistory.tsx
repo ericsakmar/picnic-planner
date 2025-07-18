@@ -1,5 +1,6 @@
 import { format, parseISO } from "date-fns";
-import type { Forecast, WeatherHistory } from "~/types/forecast";
+import { getAverage, getConditions, getMax, getMin } from "~/services/utils";
+import type { Conditions, Forecast, WeatherHistory } from "~/types/forecast";
 
 interface Props {
   date: string;
@@ -7,26 +8,22 @@ interface Props {
   forecast: Forecast;
 }
 
-// TODO move to utils and write tests
-const getAverage = (
-  history: WeatherHistory[],
-  key: "temperatureMax" | "relativeHumidity" | "windSpeedMax"
-) => history.map((h) => h[key]).reduce((acc, t) => acc + t, 0) / history.length;
-
-const getMax = (
-  history: WeatherHistory[],
-  key: "temperatureMax" | "relativeHumidity" | "windSpeedMax"
-) => history.reduce((max, cur) => (cur[key] > max[key] ? cur : max));
-
-const getMin = (
-  history: WeatherHistory[],
-  key: "temperatureMax" | "relativeHumidity" | "windSpeedMax"
-) => history.reduce((max, cur) => (cur[key] < max[key] ? cur : max));
-
 const formatTemperature = (t: number) => `${Math.round(t)}°`;
 const formatHumidity = (t: number) => `${Math.round(t)}%`;
 const formatWind = (t: number) => `${Math.round(t)} mph`;
 const formatYear = (d: string) => format(d, "yyyy");
+
+function getRecommendation(conditions: Conditions) {
+  if (conditions === "ideal") {
+    return "this would be an ideal day for a picnic!";
+  }
+
+  if (conditions === "fair") {
+    return "this would be a fair day for a picnic!";
+  }
+
+  return "this would be a poor day for a picnic.";
+}
 
 export default function WeatherHistory({
   date: rawDate,
@@ -35,6 +32,7 @@ export default function WeatherHistory({
 }: Props) {
   const date = parseISO(rawDate);
   const dateDisplay = format(date, "MMMM do");
+  const conditions = getConditions(forecast);
 
   const tempAverage = getAverage(history, "temperatureMax");
   const tempMax = getMax(history, "temperatureMax");
@@ -53,11 +51,14 @@ export default function WeatherHistory({
       <h2 className="text-2xl">Weather Details for {dateDisplay}</h2>
 
       <p className="mt-4">
+        With a high temperature of {formatTemperature(forecast.temperatureMax)}{" "}
+        and a {formatHumidity(forecast.precipProbability)} chance of
+        precipitation, {getRecommendation(conditions)}
+      </p>
+
+      <p className="mt-4">
         🌡️ The high temperature will be{" "}
-        <span className="font-bold">
-          {formatTemperature(forecast.temperatureMax)}
-        </span>
-        . This is{" "}
+        {formatTemperature(forecast.temperatureMax)}. This is{" "}
         {forecast.temperatureMax > tempAverage ? " above " : " below "}
         the average for the last ten years ({formatTemperature(tempAverage)}).
         The highest temperature was {formatTemperature(tempMax.temperatureMax)}{" "}
@@ -68,10 +69,7 @@ export default function WeatherHistory({
 
       <p className="mt-4">
         ☁️ The relative humidity will be{" "}
-        <span className="font-bold">
-          {formatHumidity(forecast.relativeHumidity)}
-        </span>
-        . This is{" "}
+        {formatHumidity(forecast.relativeHumidity)}. This is{" "}
         {forecast.relativeHumidity > humidityAverage ? " above " : " below "}
         the average for the last ten years ({formatHumidity(humidityAverage)}).
         The highest relative humidity was{" "}
@@ -82,8 +80,7 @@ export default function WeatherHistory({
       </p>
 
       <p className="mt-4">
-        🌬️ The maximum wind speed will be{" "}
-        <span className="font-bold">{formatWind(forecast.windSpeedMax)}</span>.
+        🌬️ The maximum wind speed will be {formatWind(forecast.windSpeedMax)}.
         This is {forecast.windSpeedMax > windAverage ? " above " : " below "}
         the average for the last ten years ({formatWind(windAverage)}). The
         highest max wind speed was {formatWind(windMax.windSpeedMax)} in{" "}

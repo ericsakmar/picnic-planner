@@ -18,3 +18,5 @@ export const weatherHistorySchema = forecastSchema.omit({
 
 export type Forecast = z.infer<typeof forecastSchema>;
 export type WeatherHistory = z.infer<typeof weatherHistorySchema>;
+
+export type Conditions = "ideal" | "fair" | "poor";
