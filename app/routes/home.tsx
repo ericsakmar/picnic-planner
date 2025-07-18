@@ -1,3 +1,4 @@
+import { getSettings } from "~/services/settingsService";
 import type { Route } from "./+types/home";
 import { redirect } from "react-router";
 
@@ -6,9 +7,16 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  // check for valid settings. redirect to forecast if we have them,
-  // redirect to settings page if not
-  return redirect("/settings");
+  // check for valid settings
+  const settings = getSettings();
+
+  // redirect to settings page if we don't have any yet
+  if (settings === null) {
+    return redirect("/settings");
+  }
+
+  // if we do have settings, continue to the forecast page
+  return redirect("/forecast");
 }
 
 export default function Home() {
