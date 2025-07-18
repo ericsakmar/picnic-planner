@@ -19,3 +19,7 @@ export function getSettings(): Settings | null {
 
   return null;
 }
+
+export function saveSettings(settings: Settings) {
+  localStorage.setItem(KEY, JSON.stringify(settings));
+}
