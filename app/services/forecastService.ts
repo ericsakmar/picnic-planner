@@ -9,7 +9,12 @@ export async function getForecast(
   const params = {
     latitude,
     longitude,
-    daily: ["precipitation_probability_max", "temperature_2m_max"],
+    daily: [
+      "precipitation_probability_max",
+      "temperature_2m_max",
+      "relative_humidity_2m_mean",
+      "wind_speed_10m_max",
+    ],
     timezone: "America/New_York", // TODO get from client
     forecast_days: 14,
     wind_speed_unit: "mph",
@@ -19,9 +24,7 @@ export async function getForecast(
 
   const url = "https://api.open-meteo.com/v1/forecast";
   const responses = await fetchWeatherApi(url, params);
-
   const response = responses[0];
-
   const daily = response.daily()!;
 
   const dates = [
@@ -36,12 +39,18 @@ export async function getForecast(
 
   const precipProbabilities = daily.variables(0)!.valuesArray()!;
   const temperatureMaximums = daily.variables(1)!.valuesArray()!;
+  const relativeHumidities = daily.variables(2)!.valuesArray()!;
+  const windSpeedMaximums = daily.variables(3)!.valuesArray()!;
 
   const forecast = dates.map((d, i) => ({
     date: d,
     precipProbability: precipProbabilities[i],
     temperatureMax: temperatureMaximums[i],
+    relativeHumidity: relativeHumidities[i],
+    windSpeedMax: windSpeedMaximums[i],
   }));
 
   return forecast;
 }
+
+export async function getHistory(date: string) {}

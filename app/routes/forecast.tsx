@@ -1,6 +1,9 @@
 import { getSettings } from "~/services/settingsService";
 import type { Route } from "./+types/home";
-import { getForecast as getForecastBase } from "~/services/forecastService";
+import {
+  getForecast as getForecastBase,
+  getHistory as getHistoryBase,
+} from "~/services/forecastService";
 import { redirect } from "react-router";
 import { withCache } from "~/services/cacheService";
 import { forecastSchema } from "~/types/forecast";
@@ -16,6 +19,13 @@ const getForecast = withCache(
   60, // weather forecasts are updated every hour
   z.array(forecastSchema),
   getForecastBase
+);
+
+const getHistory = withCache(
+  "history",
+  60, // but probably longer?
+  z.object(),
+  getHistoryBase
 );
 
 const dateSchema = z.iso.date();
