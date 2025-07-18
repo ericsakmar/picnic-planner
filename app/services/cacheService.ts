@@ -18,6 +18,7 @@ export function getItemFromCache<T>(key: string, schema: z.ZodSchema<T>) {
     return null;
   }
 
+  console.log("cache hit");
   return cached.value;
 }
 
@@ -34,4 +35,22 @@ export function setItemInCache(
   };
 
   setItem(key, item);
+}
+
+export async function withCache<T>(
+  cacheKey: string,
+  ttlMinutes: number,
+  schema: z.ZodSchema<T>,
+  fn: Promise<T>
+) {
+  const cached = getItemFromCache(cacheKey, schema);
+  if (cached !== null) {
+    return cached;
+  }
+
+  const value = await fn;
+
+  setItemInCache(cacheKey, ttlMinutes, value);
+
+  return value;
 }
