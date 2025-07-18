@@ -8,7 +8,7 @@ import { redirect, useNavigate } from "react-router";
 import { withCache } from "~/services/cacheService";
 import { forecastSchema, weatherHistorySchema } from "~/types/forecast";
 import z from "zod";
-import { toISODateString } from "~/services/utils";
+import { isSameMonthAndDay, toISODateString } from "~/services/utils";
 import DailyForecast from "~/components/DailyForecast";
 
 export function meta({}: Route.MetaArgs) {
@@ -49,19 +49,23 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     return redirect(`/forecast?date=${date}`);
   }
 
+  const date = dateParseRes.data;
   const forecast = await getForecast(settings.latitude, settings.longitude);
   const history = await getHistory(settings.latitude, settings.longitude);
+  const historyForDay = history.filter((h) => isSameMonthAndDay(date, h.date));
 
-  return { settings, forecast, history, date: dateParseRes.data };
+  return { settings, forecast, historyForDay, date };
 }
 
 export default function Forecast({ loaderData }: Route.ComponentProps) {
-  const { forecast, date } = loaderData;
+  const { forecast, date, historyForDay } = loaderData;
   const navigate = useNavigate();
 
   const handleClick = (date: string) => {
     navigate(`/forecast?date=${date}`);
   };
+
+  console.log(historyForDay);
 
   return (
     <div className="m-4">

@@ -1,6 +1,6 @@
 import { fetchWeatherApi } from "openmeteo";
 import type { Forecast, WeatherHistory } from "~/types/forecast";
-import { toISODateString } from "./utils";
+import { isSameMonthAndDay, toISODateString } from "./utils";
 import {
   addWeeks,
   addYears,
@@ -123,9 +123,7 @@ export async function getHistory(
       relativeHumidity: relativeHumidityMeans[i],
     }))
     .filter(({ date: d1 }) =>
-      forecastRange.some(
-        (d2) => getMonth(d1) === getMonth(d2) && getDate(d1) === getDate(d2)
-      )
+      forecastRange.some((d2) => isSameMonthAndDay(d1, d2))
     );
 
   return history;
