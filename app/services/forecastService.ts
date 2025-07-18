@@ -1,6 +1,10 @@
 import { fetchWeatherApi } from "openmeteo";
+import type { Forecast } from "~/types/forecast";
 
-export async function getForecast(latitude: number, longitude: number) {
+export async function getForecast(
+  latitude: number,
+  longitude: number
+): Promise<Forecast[]> {
   const params = {
     latitude,
     longitude,
