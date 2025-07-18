@@ -33,8 +33,6 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   return redirect("/forecast");
 }
 
-// pittsburgh is 40.440624 -79.995888
-
 export default function Settings({ loaderData }: Route.ComponentProps) {
   const {
     register,
@@ -42,7 +40,16 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(settingsSchema),
-    defaultValues: loaderData.settings ?? undefined,
+    defaultValues: loaderData.settings ?? {
+      latitude: 40.440624, // pittsburgh
+      longitude: -79.995888,
+      idealTempMin: 70,
+      idealTempMax: 80,
+      fairTempMin: 60,
+      fairTempMax: 85,
+      idealPrecipMax: 20,
+      fairPrecipMax: 50,
+    },
   });
 
   const submit = useSubmit();
@@ -55,7 +62,8 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
-      <h1>hello settings</h1>
+      <h1 className="text-xl">Settings</h1>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <InputField
           name="latitude"
@@ -73,8 +81,60 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
           disabled={disabled}
         />
 
-        <button type="submit" disabled={disabled}>
-          save and continue
+        <InputField
+          name="idealTempMin"
+          label="Ideal Temperature Minimum"
+          register={register}
+          errors={errors}
+          disabled={disabled}
+        />
+
+        <InputField
+          name="idealTempMax"
+          label="Ideal Temperature Maximum"
+          register={register}
+          errors={errors}
+          disabled={disabled}
+        />
+
+        <InputField
+          name="fairTempMin"
+          label="Fair Temperature Minimum"
+          register={register}
+          errors={errors}
+          disabled={disabled}
+        />
+
+        <InputField
+          name="fairTempMax"
+          label="Fair Temperature Maximum"
+          register={register}
+          errors={errors}
+          disabled={disabled}
+        />
+
+        <InputField
+          name="idealPrecipMax"
+          label="Ideal Chance of Precipitation Maximum"
+          register={register}
+          errors={errors}
+          disabled={disabled}
+        />
+
+        <InputField
+          name="fairPrecipMax"
+          label="Fair Chance of Precipitation Maximum"
+          register={register}
+          errors={errors}
+          disabled={disabled}
+        />
+
+        <button
+          type="submit"
+          disabled={disabled}
+          className="mt-4 bg-gray-600 rounded px-4 py-1"
+        >
+          Save and Continue
         </button>
       </form>
     </>

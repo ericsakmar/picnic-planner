@@ -69,9 +69,7 @@ export default function Forecast({ loaderData }: Route.ComponentProps) {
   const selectedForecast = forecast.find((f) => f.date === date)!;
 
   return (
-    <div className="m-4">
-      <h1 className="text-6xl text-center">Picnic Planner</h1>
-
+    <>
       <div className="grid grid-cols-7 gap-2 mt-8">
         {forecast.map((f) => (
           <DailyForecast
@@ -90,6 +88,6 @@ export default function Forecast({ loaderData }: Route.ComponentProps) {
           forecast={selectedForecast}
         />
       </div>
-    </div>
+    </>
   );
 }

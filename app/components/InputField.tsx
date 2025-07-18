@@ -25,7 +25,7 @@ export default function InputField<T extends FieldValues>({
   return (
     <div className="mt-4">
       <label htmlFor={name} className="block">
-        {label}
+        {label}:
       </label>
 
       <input
