@@ -1,14 +1,15 @@
 import { getSettings } from "~/services/settingsService";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/forecast";
 import {
   getForecast as getForecastBase,
   getHistory as getHistoryBase,
 } from "~/services/forecastService";
-import { redirect } from "react-router";
+import { redirect, useNavigate } from "react-router";
 import { withCache } from "~/services/cacheService";
 import { forecastSchema, weatherHistorySchema } from "~/types/forecast";
 import z from "zod";
 import { toISODateString } from "~/services/utils";
+import DailyForecast from "~/components/DailyForecast";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Picnic Planner" }];
@@ -36,26 +37,45 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     return redirect("/settings");
   }
 
+  // gets the date for history
   // i'd use zodix for this, but they haven't updated to zod 4 yet
   const url = new URL(request.url);
   const queryParams = url.searchParams;
-  const historyParam = queryParams.get("history");
-  const historyDateParseRes = dateSchema.safeParse(historyParam);
-  if (!historyDateParseRes.success) {
+  const dateRaw = queryParams.get("date");
+  const dateParseRes = dateSchema.safeParse(dateRaw);
+  if (!dateParseRes.success) {
     // if we don't have a valid date, default to today
     const date = toISODateString(new Date());
-    return redirect(`/forecast?history=${date}`);
+    return redirect(`/forecast?date=${date}`);
   }
 
   const forecast = await getForecast(settings.latitude, settings.longitude);
-  console.log(forecast);
-
   const history = await getHistory(settings.latitude, settings.longitude);
-  console.log(history);
 
-  return { settings, forecast };
+  return { settings, forecast, history, date: dateParseRes.data };
 }
 
-export default function Forecast() {
-  return <h1>hello forecast</h1>;
+export default function Forecast({ loaderData }: Route.ComponentProps) {
+  const { forecast, date } = loaderData;
+  const navigate = useNavigate();
+
+  const handleClick = (date: string) => {
+    navigate(`/forecast?date=${date}`);
+  };
+
+  return (
+    <div className="m-4">
+      <h1 className="text-6xl text-center">Picnic Planner</h1>
+      <div className="grid grid-cols-7 gap-2 mt-8">
+        {forecast.map((f) => (
+          <DailyForecast
+            key={f.date}
+            forecast={f}
+            selected={f.date === date}
+            onClick={handleClick}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }

@@ -2,7 +2,7 @@ import z from "zod";
 
 // Forecasted temperature, precipitation, humidity, and wind details
 export const forecastSchema = z.object({
-  date: z.string(),
+  date: z.iso.date(),
   temperatureMax: z.number(),
   precipProbability: z.number(),
   relativeHumidity: z.number(),
