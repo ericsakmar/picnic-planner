@@ -3,9 +3,13 @@ import { forecastSchema, weatherHistorySchema } from "~/types/forecast";
 import { withCache } from "./cacheService";
 import localStorageService from "~/services/localStorageService.client";
 
-async function getForecastBase(latitude: number, longitude: number) {
+async function getForecastBase(
+  latitude: number,
+  longitude: number,
+  timezone: string
+) {
   const res = await fetch(
-    `/api/forecast?latitude=${latitude}&longitude=${longitude}`
+    `/api/forecast?latitude=${latitude}&longitude=${longitude}&tz=${timezone}`
   );
 
   const json = await res.json();
@@ -13,9 +17,13 @@ async function getForecastBase(latitude: number, longitude: number) {
   return data;
 }
 
-async function getHistoryBase(latitude: number, longitude: number) {
+async function getHistoryBase(
+  latitude: number,
+  longitude: number,
+  timezone: string
+) {
   const res = await fetch(
-    `/api/history?latitude=${latitude}&longitude=${longitude}`
+    `/api/history?latitude=${latitude}&longitude=${longitude}&tz=${timezone}`
   );
 
   const json = await res.json();

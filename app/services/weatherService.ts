@@ -5,7 +5,8 @@ import { addWeeks, addYears, eachDayOfInterval } from "date-fns";
 
 export async function getForecast(
   latitude: number,
-  longitude: number
+  longitude: number,
+  timezone: string
 ): Promise<Forecast[]> {
   const params = {
     latitude,
@@ -16,7 +17,7 @@ export async function getForecast(
       "relative_humidity_2m_mean",
       "wind_speed_10m_max",
     ],
-    timezone: "America/New_York", // TODO get from client
+    timezone,
     forecast_days: 14,
     wind_speed_unit: "mph",
     temperature_unit: "fahrenheit",
@@ -58,7 +59,8 @@ export async function getForecast(
 // but each record will be small and we will then filter it down to only the dates we care about
 export async function getHistory(
   latitude: number,
-  longitude: number
+  longitude: number,
+  timezone: string
 ): Promise<WeatherHistory[]> {
   // these represent the dates in the ui
   const forecastStart = new Date(); // July 18, 2025
@@ -81,7 +83,7 @@ export async function getHistory(
       "wind_speed_10m_max",
       "relative_humidity_2m_mean",
     ],
-    timezone: "America/New_York",
+    timezone,
     temperature_unit: "fahrenheit",
     wind_speed_unit: "mph",
     precipitation_unit: "inch",

@@ -29,8 +29,10 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   }
 
   const date = queryParamsRes.data.date;
-  const forecast = await getForecast(settings.latitude, settings.longitude);
-  const history = await getHistory(settings.latitude, settings.longitude);
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const forecast = await getForecast(settings.latitude, settings.longitude, tz);
+  const history = await getHistory(settings.latitude, settings.longitude, tz);
   const historyForDay = history.filter((h) => isSameMonthAndDay(date, h.date));
 
   return { settings, forecast, historyForDay, date };
