@@ -11,6 +11,7 @@ interface Props<T extends FieldValues> {
   disabled?: boolean;
   register: UseFormRegister<T>;
   errors: FieldErrors<T>;
+  type?: React.HTMLInputTypeAttribute;
 }
 
 export default function InputField<T extends FieldValues>({
@@ -19,6 +20,7 @@ export default function InputField<T extends FieldValues>({
   name,
   errors,
   disabled,
+  type,
 }: Props<T>) {
   const errorMessage = errors[name]?.message;
 
@@ -31,6 +33,7 @@ export default function InputField<T extends FieldValues>({
       <input
         id={name}
         disabled={disabled}
+        type={type}
         {...register(name)}
         className="block text-black w-full border bg-white rounded-md p-2 disabled:opacity-50"
       />

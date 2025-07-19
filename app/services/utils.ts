@@ -1,8 +1,7 @@
-// TODO test these?
-
 import { getDate, getMonth, type DateArg } from "date-fns";
 import { formatISOWithOptions } from "date-fns/fp";
 import type { Conditions, Forecast, WeatherHistory } from "~/types/forecast";
+import type { Settings } from "~/types/settings";
 
 export function formDataToObject(formData: FormData): unknown {
   const entries = [...formData.entries()];
@@ -25,40 +24,45 @@ export function isSameMonthAndDay(d1: DateArg<Date>, d2: DateArg<Date>) {
 export const getAverage = (
   history: WeatherHistory[],
   key: "temperatureMax" | "relativeHumidity" | "windSpeedMax"
-) => history.map((h) => h[key]).reduce((acc, t) => acc + t, 0) / history.length;
+) =>
+  history.length === 0
+    ? undefined
+    : history.map((h) => h[key]).reduce((acc, t) => acc + t, 0) /
+      history.length;
 
 export const getMax = (
   history: WeatherHistory[],
   key: "temperatureMax" | "relativeHumidity" | "windSpeedMax"
-) => history.reduce((max, cur) => (cur[key] > max[key] ? cur : max));
+) =>
+  history.length === 0
+    ? undefined
+    : history.reduce((max, cur) => (cur[key] > max[key] ? cur : max));
 
 export const getMin = (
   history: WeatherHistory[],
   key: "temperatureMax" | "relativeHumidity" | "windSpeedMax"
-) => history.reduce((max, cur) => (cur[key] < max[key] ? cur : max));
+) =>
+  history.length === 0
+    ? undefined
+    : history.reduce((max, cur) => (cur[key] < max[key] ? cur : max));
 
-const idealTempMin = 70;
-const idealTempMax = 80;
-
-const fairTempMin = 65;
-const fairTempMax = 85;
-
-const idealPrecipMax = 30;
-const fairPrecipMax = 50;
-
-export function getConditions(forecast: Forecast): Conditions {
+// THESE SHOULD BE ROUNDED. DO THAT HERE OR ON SERVER?
+export function getConditions(
+  forecast: Forecast,
+  settings: Settings
+): Conditions {
   if (
-    forecast.temperatureMax <= idealTempMax &&
-    forecast.temperatureMax >= idealTempMin &&
-    forecast.precipProbability <= idealPrecipMax
+    forecast.temperatureMax <= settings.idealTempMax &&
+    forecast.temperatureMax >= settings.idealTempMin &&
+    forecast.precipProbability <= settings.idealPrecipMax
   ) {
     return "ideal";
   }
 
   if (
-    forecast.temperatureMax <= fairTempMax &&
-    forecast.temperatureMax >= fairTempMin &&
-    forecast.precipProbability <= fairPrecipMax
+    forecast.temperatureMax <= settings.fairTempMax &&
+    forecast.temperatureMax >= settings.fairTempMin &&
+    forecast.precipProbability <= settings.fairPrecipMax
   ) {
     return "fair";
   }

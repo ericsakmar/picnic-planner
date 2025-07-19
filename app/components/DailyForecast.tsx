@@ -1,11 +1,13 @@
 import { format, getDay, parseISO } from "date-fns";
 import { getConditions } from "~/services/utils";
 import type { Conditions, Forecast } from "~/types/forecast";
+import type { Settings } from "~/types/settings";
 
 interface Props {
   forecast: Forecast;
   selected: boolean;
   onClick: (date: string) => void;
+  settings: Settings;
 }
 
 const colors: Record<Conditions, string> = {
@@ -14,13 +16,18 @@ const colors: Record<Conditions, string> = {
   poor: "text-red-400",
 };
 
-export default function DailyForecast({ forecast, selected, onClick }: Props) {
+export default function DailyForecast({
+  forecast,
+  selected,
+  onClick,
+  settings,
+}: Props) {
   const date = parseISO(forecast.date);
   const month = format(date, "MMM");
   const day = format(date, "dd");
   const weekday = format(date, "EEE");
   const dayOfWeek = getDay(date);
-  const conditions = getConditions(forecast);
+  const conditions = getConditions(forecast, settings);
   const color = colors[conditions];
 
   return (

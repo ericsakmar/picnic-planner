@@ -68,6 +68,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <InputField
           name="latitude"
           label="Latitude"
+          type="number"
           register={register}
           errors={errors}
           disabled={disabled}
@@ -76,6 +77,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <InputField
           name="longitude"
           label="Longitude"
+          type="number"
           register={register}
           errors={errors}
           disabled={disabled}
@@ -84,6 +86,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <InputField
           name="idealTempMin"
           label="Ideal Temperature Minimum"
+          type="number"
           register={register}
           errors={errors}
           disabled={disabled}
@@ -92,6 +95,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <InputField
           name="idealTempMax"
           label="Ideal Temperature Maximum"
+          type="number"
           register={register}
           errors={errors}
           disabled={disabled}
@@ -100,6 +104,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <InputField
           name="fairTempMin"
           label="Fair Temperature Minimum"
+          type="number"
           register={register}
           errors={errors}
           disabled={disabled}
@@ -108,6 +113,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <InputField
           name="fairTempMax"
           label="Fair Temperature Maximum"
+          type="number"
           register={register}
           errors={errors}
           disabled={disabled}
@@ -116,6 +122,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <InputField
           name="idealPrecipMax"
           label="Ideal Chance of Precipitation Maximum"
+          type="number"
           register={register}
           errors={errors}
           disabled={disabled}
@@ -124,6 +131,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
         <InputField
           name="fairPrecipMax"
           label="Fair Chance of Precipitation Maximum"
+          type="number"
           register={register}
           errors={errors}
           disabled={disabled}

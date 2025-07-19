@@ -1,11 +1,13 @@
 import { format, parseISO } from "date-fns";
 import { getAverage, getConditions, getMax, getMin } from "~/services/utils";
 import type { Conditions, Forecast, WeatherHistory } from "~/types/forecast";
+import type { Settings } from "~/types/settings";
 
 interface Props {
   date: string;
   history: WeatherHistory[];
   forecast: Forecast;
+  settings: Settings;
 }
 
 const formatTemperature = (t: number) => `${Math.round(t)}°`;
@@ -29,10 +31,11 @@ export default function WeatherHistory({
   date: rawDate,
   history,
   forecast,
+  settings,
 }: Props) {
   const date = parseISO(rawDate);
   const dateDisplay = format(date, "MMMM do");
-  const conditions = getConditions(forecast);
+  const conditions = getConditions(forecast, settings);
 
   const tempAverage = getAverage(history, "temperatureMax");
   const tempMax = getMax(history, "temperatureMax");

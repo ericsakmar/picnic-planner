@@ -59,7 +59,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 }
 
 export default function Forecast({ loaderData }: Route.ComponentProps) {
-  const { forecast, date, historyForDay } = loaderData;
+  const { forecast, date, historyForDay, settings } = loaderData;
   const navigate = useNavigate();
 
   const handleClick = (date: string) => {
@@ -77,6 +77,7 @@ export default function Forecast({ loaderData }: Route.ComponentProps) {
             forecast={f}
             selected={f.date === date}
             onClick={handleClick}
+            settings={settings}
           />
         ))}
       </div>
@@ -86,6 +87,7 @@ export default function Forecast({ loaderData }: Route.ComponentProps) {
           date={date}
           history={historyForDay}
           forecast={selectedForecast}
+          settings={settings}
         />
       </div>
     </>
