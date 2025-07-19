@@ -64,7 +64,7 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
     <>
       <h1 className="text-xl">Settings</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <InputField
           name="latitude"
           label="Latitude"

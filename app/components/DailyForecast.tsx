@@ -32,7 +32,7 @@ export default function DailyForecast({
 
   return (
     <div
-      className={`text-center bg-gray-700 ${color} p-1 aria-selected:bg-gray-500`}
+      className={`text-center bg-gray-800 ${color} p-1 aria-selected:bg-gray-600`}
       aria-selected={selected}
       style={{ gridColumnStart: dayOfWeek + 1 }}
       onClick={() => onClick(forecast.date)}

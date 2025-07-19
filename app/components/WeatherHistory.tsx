@@ -49,6 +49,20 @@ export default function WeatherHistory({
   const windMax = getMax(history, "windSpeedMax");
   const windMin = getMin(history, "windSpeedMax");
 
+  if (
+    tempAverage === undefined ||
+    tempMax === undefined ||
+    tempMin === undefined ||
+    humidityAverage === undefined ||
+    humidityMax === undefined ||
+    humidityMin === undefined ||
+    windAverage === undefined ||
+    windMax === undefined ||
+    windMin === undefined
+  ) {
+    return null;
+  }
+
   return (
     <>
       <h2 className="text-2xl">Weather Details for {dateDisplay}</h2>

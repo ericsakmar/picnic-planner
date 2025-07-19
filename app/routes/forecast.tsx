@@ -4,7 +4,7 @@ import {
   getForecast as getForecastBase,
   getHistory as getHistoryBase,
 } from "~/services/forecastService";
-import { redirect, useNavigate } from "react-router";
+import { Link, redirect, useNavigate } from "react-router";
 import { withCache } from "~/services/cacheService";
 import { forecastSchema, weatherHistorySchema } from "~/types/forecast";
 import z from "zod";
@@ -90,6 +90,10 @@ export default function Forecast({ loaderData }: Route.ComponentProps) {
           settings={settings}
         />
       </div>
+
+      <Link to="/settings" className="block mt-8 underline text-blue-500">
+        Settings
+      </Link>
     </>
   );
 }

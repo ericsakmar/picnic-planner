@@ -1,15 +1,7 @@
 import { fetchWeatherApi } from "openmeteo";
 import type { Forecast, WeatherHistory } from "~/types/forecast";
 import { isSameMonthAndDay, toISODateString } from "./utils";
-import {
-  addWeeks,
-  addYears,
-  eachDayOfInterval,
-  getDate,
-  getMonth,
-  isSameDay,
-  isSameMonth,
-} from "date-fns";
+import { addWeeks, addYears, eachDayOfInterval } from "date-fns";
 
 export async function getForecast(
   latitude: number,
@@ -53,10 +45,10 @@ export async function getForecast(
 
   const forecast = dates.map((d, i) => ({
     date: d,
-    precipProbability: precipProbabilities[i],
-    temperatureMax: temperatureMaximums[i],
-    relativeHumidity: relativeHumidities[i],
-    windSpeedMax: windSpeedMaximums[i],
+    precipProbability: Math.round(precipProbabilities[i]),
+    temperatureMax: Math.round(temperatureMaximums[i]),
+    relativeHumidity: Math.round(relativeHumidities[i]),
+    windSpeedMax: Math.round(windSpeedMaximums[i]),
   }));
 
   return forecast;
@@ -100,7 +92,6 @@ export async function getHistory(
   const response = responses[0];
   const daily = response.daily()!;
 
-  // TODO copied
   const dates = [
     ...Array(
       (Number(daily.timeEnd()) - Number(daily.time())) / daily.interval()
@@ -124,7 +115,13 @@ export async function getHistory(
     }))
     .filter(({ date: d1 }) =>
       forecastRange.some((d2) => isSameMonthAndDay(d1, d2))
-    );
+    )
+    .map((d) => ({
+      ...d,
+      temperatureMax: Math.round(d.temperatureMax),
+      windSpeedMax: Math.round(d.windSpeedMax),
+      relativeHumidity: Math.round(d.relativeHumidity),
+    }));
 
   return history;
 }
