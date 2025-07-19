@@ -1,4 +1,4 @@
-import { getHistory as getHistoryBase } from "~/services/forecastService";
+import { getHistory as getHistoryBase } from "~/services/weatherService";
 import type { Route } from "./+types/forecast";
 import { parseQueryParams } from "~/services/utils";
 import z from "zod";

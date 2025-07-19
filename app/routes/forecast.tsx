@@ -1,6 +1,6 @@
-import { getSettings } from "~/services/settingsService";
+import { getSettings } from "~/services/settingsService.client";
 import type { Route } from "./+types/forecast";
-import { getForecast, getHistory } from "~/services/forecastService.client";
+import { getForecast, getHistory } from "~/services/weatherService.client";
 import { Link, redirect } from "react-router";
 import z from "zod";
 import {
@@ -12,17 +12,18 @@ import DailyForecast from "~/components/DailyForecast";
 import WeatherHistory from "~/components/WeatherHistory";
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  // check for settings and redirect if we don't have them yet
   var settings = getSettings();
   if (settings === null) {
     return redirect("/settings");
   }
 
+  // check for a selected date and select the first date if we don't have one
   const queryParamsRes = parseQueryParams(
     request,
     z.object({ date: z.iso.date() })
   );
   if (!queryParamsRes.success) {
-    // if we don't have a valid date, default to today
     const date = toISODateString(new Date());
     return redirect(`/forecast?date=${date}`);
   }

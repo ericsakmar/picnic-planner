@@ -1,4 +1,4 @@
-import { getSettings } from "~/services/settingsService";
+import { getSettings } from "~/services/settingsService.client";
 import type { Route } from "./+types/home";
 import { redirect } from "react-router";
 

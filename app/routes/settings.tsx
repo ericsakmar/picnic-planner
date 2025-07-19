@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { getSettings, saveSettings } from "~/services/settingsService";
+import { getSettings, saveSettings } from "~/services/settingsService.client";
 import type { Route } from "./+types/settings";
 import { settingsSchema, type Settings } from "~/types/settings";
 import InputField from "~/components/InputField";
