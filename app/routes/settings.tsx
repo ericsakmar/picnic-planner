@@ -5,12 +5,7 @@ import { getSettings, saveSettings } from "~/services/settingsService.client";
 import type { Route } from "./+types/settings";
 import { settingsSchema, type Settings } from "~/types/settings";
 import InputField from "~/components/InputField";
-import { formDataToObject } from "~/services/utils";
 import { redirect, useSubmit } from "react-router";
-
-export function meta({}: Route.MetaArgs) {
-  return [{ title: "Picnic Planner" }];
-}
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   var settings = getSettings();
@@ -19,7 +14,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
-  const formDataObject = formDataToObject(formData);
+  const formDataObject = Object.fromEntries(formData);
   const validationRes = settingsSchema.safeParse(formDataObject);
 
   if (!validationRes.success) {

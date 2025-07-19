@@ -4,18 +4,6 @@ import type z from "zod";
 import type { Conditions, Forecast, WeatherHistory } from "~/types/forecast";
 import type { Settings } from "~/types/settings";
 
-// TODO can this use objectfromentries?
-export function formDataToObject(formData: FormData): unknown {
-  const entries = [...formData.entries()];
-
-  return entries.reduce((acc, [key, value]) => {
-    return {
-      ...acc,
-      [key]: value,
-    };
-  }, {});
-}
-
 // i'd use zodix for this, but they haven't updated to zod 4 yet
 export function parseQueryParams<T>(request: Request, schema: z.ZodSchema<T>) {
   const url = new URL(request.url);

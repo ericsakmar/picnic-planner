@@ -1,6 +1,5 @@
 import { describe, it, assert } from "vitest";
 import {
-  formDataToObject,
   getAverage,
   getConditions,
   getMax,
@@ -9,19 +8,6 @@ import {
 } from "./utils";
 import type { Forecast, WeatherHistory } from "~/types/forecast";
 import type { Settings } from "~/types/settings";
-
-describe("FormData to Object", () => {
-  it("converts a formdata to an object", () => {
-    const formData = new FormData();
-    formData.set("key1", "value1");
-    formData.set("key2", "value2");
-
-    const obj = formDataToObject(formData) as any;
-    assert(obj["key1"] === formData.get("key1"));
-    assert(obj["key2"] === formData.get("key2"));
-    assert(obj["key3"] === undefined);
-  });
-});
 
 describe("is same month and day", () => {
   it("compares the month and day but ignores the year", () => {
