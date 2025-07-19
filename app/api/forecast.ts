@@ -8,8 +8,8 @@ import { forecastSchema } from "~/types/forecast";
 import memoryStorageService from "~/services/memoryStorageService";
 
 const getForecast = withCache(getForecastBase, {
-  keyPrefix: "forecast",
-  ttlMinutes: 60, // weather forecasts are updated every hour
+  getKey: (args) => `forecast__${args.join("__")}`,
+  ttlMinutes: 30, // weather forecasts are updated every hour
   schema: z.array(forecastSchema),
   storage: memoryStorageService,
 });

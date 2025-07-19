@@ -24,14 +24,14 @@ async function getHistoryBase(latitude: number, longitude: number) {
 }
 
 export const getForecast = withCache(getForecastBase, {
-  keyPrefix: "forecast",
-  ttlMinutes: 60, // weather forecasts are updated every hour
+  getKey: (args) => `forecast__${args.join("__")}`,
+  ttlMinutes: 30, // weather forecasts are updated every hour
   schema: z.array(forecastSchema),
   storage: localStorageService,
 });
 
 export const getHistory = withCache(getHistoryBase, {
-  keyPrefix: "history",
+  getKey: (args) => `history__${args.join("__")}`,
   ttlMinutes: 12 * 60, // 12 hours, history doesn't change, but we might need to get a new range
   schema: z.array(weatherHistorySchema),
   storage: localStorageService,

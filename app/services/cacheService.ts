@@ -1,5 +1,6 @@
 import z from "zod";
 
+type KeyFn = (args: any[]) => string;
 type GetItemFn = <T>(key: string, schema: z.ZodSchema<T>) => T | null;
 type SetItemFn = <T>(key: string, value: T) => void;
 type RemoveItemFn = (key: string) => void;
@@ -58,14 +59,14 @@ function setItemInCache(
 export function withCache<TArgs extends any[], TResult>(
   fn: (...args: TArgs) => Promise<TResult>,
   options: {
-    keyPrefix: string;
+    getKey: KeyFn;
     ttlMinutes: number;
     schema: z.ZodSchema<TResult>;
     storage: Storage;
   }
 ): (...args: TArgs) => Promise<TResult> {
   return async function (...args: TArgs): Promise<TResult> {
-    const cacheKey = `${options.keyPrefix}-${args.join("-")}`;
+    const cacheKey = options.getKey(args);
 
     const cached = getItemFromCache(cacheKey, options.schema, options.storage);
     if (cached !== null) {

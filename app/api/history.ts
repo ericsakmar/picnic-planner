@@ -8,7 +8,7 @@ import { weatherHistorySchema } from "~/types/forecast";
 import memoryStorageService from "~/services/memoryStorageService";
 
 const getHistory = withCache(getHistoryBase, {
-  keyPrefix: "history",
+  getKey: (args) => `history__${args.join("__")}`,
   ttlMinutes: 12 * 60, // 12 hours, history doesn't change, but we might need to get a new range
   schema: z.array(weatherHistorySchema),
   storage: memoryStorageService,
