@@ -4,7 +4,7 @@ import {
   getForecast as getForecastBase,
   getHistory as getHistoryBase,
 } from "~/services/forecastService";
-import { Link, redirect, useNavigate } from "react-router";
+import { Link, redirect } from "react-router";
 import { withCache } from "~/services/cacheService";
 import { forecastSchema, weatherHistorySchema } from "~/types/forecast";
 import z from "zod";
@@ -60,12 +60,6 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 
 export default function Forecast({ loaderData }: Route.ComponentProps) {
   const { forecast, date, historyForDay, settings } = loaderData;
-  const navigate = useNavigate();
-
-  const handleClick = (date: string) => {
-    navigate(`/forecast?date=${date}`);
-  };
-
   const selectedForecast = forecast.find((f) => f.date === date)!;
 
   return (
@@ -76,7 +70,6 @@ export default function Forecast({ loaderData }: Route.ComponentProps) {
             key={f.date}
             forecast={f}
             selected={f.date === date}
-            onClick={handleClick}
             settings={settings}
           />
         ))}

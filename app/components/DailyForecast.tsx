@@ -1,4 +1,5 @@
 import { format, getDay, parseISO } from "date-fns";
+import { Link } from "react-router";
 import { getConditions } from "~/services/utils";
 import type { Conditions, Forecast } from "~/types/forecast";
 import type { Settings } from "~/types/settings";
@@ -6,7 +7,6 @@ import type { Settings } from "~/types/settings";
 interface Props {
   forecast: Forecast;
   selected: boolean;
-  onClick: (date: string) => void;
   settings: Settings;
 }
 
@@ -16,12 +16,7 @@ const colors: Record<Conditions, string> = {
   poor: "text-red-400",
 };
 
-export default function DailyForecast({
-  forecast,
-  selected,
-  onClick,
-  settings,
-}: Props) {
+export default function DailyForecast({ forecast, selected, settings }: Props) {
   const date = parseISO(forecast.date);
   const month = format(date, "MMM");
   const day = format(date, "dd");
@@ -31,16 +26,16 @@ export default function DailyForecast({
   const color = colors[conditions];
 
   return (
-    <div
+    <Link
+      to={`/forecast?date=${forecast.date}`}
       className={`text-center bg-gray-800 ${color} p-1 aria-selected:bg-gray-600`}
       aria-selected={selected}
       style={{ gridColumnStart: dayOfWeek + 1 }}
-      onClick={() => onClick(forecast.date)}
     >
       <div className="text-sm">{weekday}</div>
       <div className="text-sm">{month}</div>
       <div className="text-2xl">{day}</div>
       <div className="text-sm">{conditions}</div>
-    </div>
+    </Link>
   );
 }
