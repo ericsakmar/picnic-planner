@@ -1,5 +1,73 @@
 # ☀️ Weather Picnic Planner
 
+Hello and welcome to my implementation of teh Weather Picnic Planner code exercise!
+
+I chose [React Router in Famework Mode](https://reactrouter.com/start/framework/installation) because it's
+a full-stack TypeScript and React framework that I happen to already be familiar with.
+
+The app is mostly running as an SPA to make it easier to work with `localStorage`.
+There are some API style endpoints which are not totally necessary, but I wanted to demonstrate the flexibility of the caching system.
+
+For forecast and history requests, the app will first check `localStorage`, and then request it from the server if there is no cache hit.
+On the server, it will first check an in-memory cache and then finally call the OpenMeteo API if there's nothing in the cache.
+
+To start it, run:
+
+```
+npm i
+npm run dev
+```
+
+There are also a few tests for some of the utility functions. To run those:
+
+```
+npm run test
+```
+
+On first run (or after `localStorage` is cleared), it will present you with a form to
+set up your preferences for the app. Once that has been stored, it will then take you to
+the main page of the app.
+
+## Features and Decisions
+
+One of the more interesting parts of the application is the implementation of the caching feature.
+The caching itself is simple - it uses string keys and a ttl to determine if there is useable data in the cache.
+
+I designed it with composability in mind, so that we can wrap any function and provide any storage service
+for it to use. This then allowed me to easily set up a `localStorage` cache for the client and
+an in-memory cache for the server. For example:
+
+```
+// local storage cache, for clients
+const getForecast = withCache(getForecastBase, {
+  getKey: (args) => `forecast__${args.join("__")}`,
+  ttlMinutes: 30,
+  schema: z.array(forecastSchema),
+  storage: localStorageService,
+});
+
+// in memory cache, for the server
+const getForecast = withCache(getForecastBase, {
+  getKey: (args) => `forecast__${args.join("__")}`,
+  ttlMinutes: 30,
+  schema: z.array(forecastSchema),
+  storage: memoryStorageService,
+});
+```
+
+If either of those storage services need to be changed, we could quickly add another by
+creating a wrapper that matches the storage service interface.
+
+We're also able to use a different weather API by creating a function for it and wrapping it with `withCache`.
+
+This implementation allows for a very clean interface, with callers not needing to know much about it:
+
+```
+const forecast = await getForecast(settings.latitude, settings.longitude, tz);
+```
+
+# Original README
+
 Welcome to the Weather Picnic Planner code exercise! Your goal is to create a robust, intuitive application that helps users choose the best day for a picnic based on weather forecasts and historical trends. You will use the [Open-Meteo API](https://open-meteo.com/) as your primary weather data source.
 
 ## 🎯 Main Features and Requirements

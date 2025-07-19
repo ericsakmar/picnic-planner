@@ -20,6 +20,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     z.object({
       latitude: z.coerce.number(),
       longitude: z.coerce.number(),
+      tz: z.string(),
     })
   );
 
@@ -27,8 +28,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     return data({ errors: queryParamsRes.error }, { status: 400 });
   }
 
-  const { latitude, longitude } = queryParamsRes.data;
+  const { latitude, longitude, tz } = queryParamsRes.data;
 
-  const forecast = await getHistory(latitude, longitude);
+  const forecast = await getHistory(latitude, longitude, tz);
   return forecast;
 }
