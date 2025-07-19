@@ -1,9 +1,6 @@
 import type { z } from "zod";
 
-export function getItem<TSchema extends z.ZodType>(
-  key: string,
-  schema: TSchema
-) {
+function getItem<TSchema extends z.ZodType>(key: string, schema: TSchema) {
   const rawValue = localStorage.getItem(key);
   if (rawValue === null) {
     return null;
@@ -18,11 +15,12 @@ export function getItem<TSchema extends z.ZodType>(
   }
 }
 
-// TODO try/catch?
-export function setItem(key: string, value: unknown) {
+function setItem(key: string, value: unknown) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-export function removeItem(key: string) {
+function removeItem(key: string) {
   localStorage.removeItem(key);
 }
+
+export default { getItem, setItem, removeItem };

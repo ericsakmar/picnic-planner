@@ -1,13 +1,26 @@
 import z from "zod";
-import { getItem, removeItem, setItem } from "./localStorageService";
 
-function getItemFromCache<T>(key: string, schema: z.ZodSchema<T>) {
+type GetItemFn = <T>(key: string, schema: z.ZodSchema<T>) => T | null;
+type SetItemFn = <T>(key: string, value: T) => void;
+type RemoveItemFn = (key: string) => void;
+
+interface Storage {
+  getItem: GetItemFn;
+  setItem: SetItemFn;
+  removeItem: RemoveItemFn;
+}
+
+function getItemFromCache<T>(
+  key: string,
+  schema: z.ZodSchema<T>,
+  storage: Storage
+) {
   const cacheSchema = z.object({
     expires: z.number(),
     value: schema,
   });
 
-  const cached = getItem(key, cacheSchema);
+  const cached = storage.getItem(key, cacheSchema);
   if (cached === null) {
     console.log("cache miss", key);
     return null;
@@ -16,7 +29,7 @@ function getItemFromCache<T>(key: string, schema: z.ZodSchema<T>) {
   const now = new Date();
   if (now.getTime() > cached.expires) {
     console.log("expired", key);
-    removeItem(key);
+    storage.removeItem(key);
     return null;
   }
 
@@ -24,7 +37,12 @@ function getItemFromCache<T>(key: string, schema: z.ZodSchema<T>) {
   return cached.value;
 }
 
-function setItemInCache(key: string, ttlMinutes: number, value: unknown) {
+function setItemInCache(
+  key: string,
+  ttlMinutes: number,
+  value: unknown,
+  storage: Storage
+) {
   const now = new Date();
 
   const item = {
@@ -32,28 +50,31 @@ function setItemInCache(key: string, ttlMinutes: number, value: unknown) {
     value: value,
   };
 
-  setItem(key, item);
+  storage.setItem(key, item);
 }
 
 // these types are a bit tricky to follow, but it allows us to accept a function
 // and then return a function with those same args
 export function withCache<TArgs extends any[], TResult>(
-  keyPrefix: string,
-  ttlMinutes: number,
-  schema: z.ZodSchema<TResult>,
-  fn: (...args: TArgs) => Promise<TResult>
+  fn: (...args: TArgs) => Promise<TResult>,
+  options: {
+    keyPrefix: string;
+    ttlMinutes: number;
+    schema: z.ZodSchema<TResult>;
+    storage: Storage;
+  }
 ): (...args: TArgs) => Promise<TResult> {
   return async function (...args: TArgs): Promise<TResult> {
-    const cacheKey = `${keyPrefix}-${args.join("-")}`;
+    const cacheKey = `${options.keyPrefix}-${args.join("-")}`;
 
-    const cached = getItemFromCache(cacheKey, schema);
+    const cached = getItemFromCache(cacheKey, options.schema, options.storage);
     if (cached !== null) {
       return cached;
     }
 
     const value = await fn(...args);
 
-    setItemInCache(cacheKey, ttlMinutes, value);
+    setItemInCache(cacheKey, options.ttlMinutes, value, options.storage);
 
     return value;
   };
