@@ -1,37 +1,15 @@
 import { getSettings } from "~/services/settingsService";
 import type { Route } from "./+types/forecast";
-import {
-  getForecast as getForecastBase,
-  getHistory as getHistoryBase,
-} from "~/services/forecastService";
+import { getForecast, getHistory } from "~/services/forecastService.client";
 import { Link, redirect } from "react-router";
-import { withCache } from "~/services/cacheService";
-import { forecastSchema, weatherHistorySchema } from "~/types/forecast";
 import z from "zod";
-import { isSameMonthAndDay, toISODateString } from "~/services/utils";
+import {
+  isSameMonthAndDay,
+  parseQueryParams,
+  toISODateString,
+} from "~/services/utils";
 import DailyForecast from "~/components/DailyForecast";
 import WeatherHistory from "~/components/WeatherHistory";
-import localStorageService from "~/services/localStorageService.client";
-
-export function meta({}: Route.MetaArgs) {
-  return [{ title: "Picnic Planner" }];
-}
-
-const getForecast = withCache(getForecastBase, {
-  keyPrefix: "forecast",
-  ttlMinutes: 60, // weather forecasts are updated every hour
-  schema: z.array(forecastSchema),
-  storage: localStorageService,
-});
-
-const getHistory = withCache(getHistoryBase, {
-  keyPrefix: "history",
-  ttlMinutes: 12 * 60, // 12 hours, history doesn't change, but we might need to get a new range
-  schema: z.array(weatherHistorySchema),
-  storage: localStorageService,
-});
-
-const dateSchema = z.iso.date();
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   var settings = getSettings();
@@ -39,19 +17,17 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     return redirect("/settings");
   }
 
-  // gets the date for history
-  // i'd use zodix for this, but they haven't updated to zod 4 yet
-  const url = new URL(request.url);
-  const queryParams = url.searchParams;
-  const dateRaw = queryParams.get("date");
-  const dateParseRes = dateSchema.safeParse(dateRaw);
-  if (!dateParseRes.success) {
+  const queryParamsRes = parseQueryParams(
+    request,
+    z.object({ date: z.iso.date() })
+  );
+  if (!queryParamsRes.success) {
     // if we don't have a valid date, default to today
     const date = toISODateString(new Date());
     return redirect(`/forecast?date=${date}`);
   }
 
-  const date = dateParseRes.data;
+  const date = queryParamsRes.data.date;
   const forecast = await getForecast(settings.latitude, settings.longitude);
   const history = await getHistory(settings.latitude, settings.longitude);
   const historyForDay = history.filter((h) => isSameMonthAndDay(date, h.date));

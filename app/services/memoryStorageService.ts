@@ -2,10 +2,7 @@ import type { z } from "zod";
 
 const cache: { [key: string]: unknown } = {};
 
-export function getItem<TSchema extends z.ZodType>(
-  key: string,
-  schema: TSchema
-) {
+function getItem<TSchema extends z.ZodType>(key: string, schema: TSchema) {
   const rawValue = cache[key];
   if (rawValue === null) {
     return null;
@@ -19,10 +16,12 @@ export function getItem<TSchema extends z.ZodType>(
   }
 }
 
-export function setItem(key: string, value: unknown) {
+function setItem(key: string, value: unknown) {
   cache[key] = value;
 }
 
-export function removeItem(key: string) {
+function removeItem(key: string) {
   delete cache[key];
 }
+
+export default { getItem, setItem, removeItem };

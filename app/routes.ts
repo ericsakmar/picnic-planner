@@ -10,5 +10,7 @@ export default [
     index("routes/home.tsx"),
     route("settings", "routes/settings.tsx"),
     route("forecast", "routes/forecast.tsx"),
+    route("/api/forecast", "api/forecast.ts"),
+    route("/api/history", "api/history.ts"),
   ]),
 ] satisfies RouteConfig;
