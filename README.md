@@ -1,15 +1,17 @@
 # ☀️ Weather Picnic Planner
 
-Hello and welcome to my implementation of teh Weather Picnic Planner code exercise!
+Hello and welcome to my implementation of the Weather Picnic Planner code exercise!
 
 I chose [React Router in Famework Mode](https://reactrouter.com/start/framework/installation) because it's
 a full-stack TypeScript and React framework that I happen to already be familiar with.
 
-The app is mostly running as an SPA to make it easier to work with `localStorage`.
+The app is mostly running in [SPA Mode](https://reactrouter.com/how-to/spa) to make it easier to work with `localStorage`.
 There are some API style endpoints which are not totally necessary, but I wanted to demonstrate the flexibility of the caching system.
 
 For forecast and history requests, the app will first check `localStorage`, and then request it from the server if there is no cache hit.
 On the server, it will first check an in-memory cache and then finally call the OpenMeteo API if there's nothing in the cache.
+
+![Screenshot](/screenshot.png?raw=true)
 
 To start it, run:
 

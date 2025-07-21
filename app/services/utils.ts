@@ -44,7 +44,6 @@ export const getMin = (
     ? undefined
     : history.reduce((max, cur) => (cur[key] < max[key] ? cur : max));
 
-// THESE SHOULD BE ROUNDED. DO THAT HERE OR ON SERVER?
 export function getConditions(
   forecast: Forecast,
   settings: Settings

@@ -23,18 +23,18 @@ function getItemFromCache<T>(
 
   const cached = storage.getItem(key, cacheSchema);
   if (cached === null) {
-    console.log("cache miss", key);
+    // console.log("cache miss", key);
     return null;
   }
 
   const now = new Date();
   if (now.getTime() > cached.expires) {
-    console.log("expired", key);
+    // console.log("expired", key);
     storage.removeItem(key);
     return null;
   }
 
-  console.log("cache hit", key);
+  // console.log("cache hit", key);
   return cached.value;
 }
 

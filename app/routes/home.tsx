@@ -2,10 +2,6 @@ import { getSettings } from "~/services/settingsService.client";
 import type { Route } from "./+types/home";
 import { redirect } from "react-router";
 
-export function meta({}: Route.MetaArgs) {
-  return [{ title: "Picnic Planner" }];
-}
-
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   // check for valid settings
   const settings = getSettings();
